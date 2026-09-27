@@ -1,0 +1,30 @@
+# ==== Fichiers de compilation LaTeX ====
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.nav
+*.snm
+*.vrb
+*.lof
+*.lot
+*.idx
+*.ilg
+*.ind
+ 
+# ==== PDF généré (décommente si tu ne veux PAS versionner le PDF) ====
+# *.pdf
+ 
+# ==== Fichiers système ====
+.DS_Store
+Thumbs.db
+ 
+# ==== Éditeurs ====
+*.swp
+*~
+ 

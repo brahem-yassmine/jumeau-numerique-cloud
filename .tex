@@ -1,0 +1,339 @@
+\documentclass[a4paper,11pt]{report}
+ 
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{todonotes}
+\usepackage{amsmath}
+ 
+\title{État de l'art \\ \large Jumeau numérique d'une infrastructure de calcul}
+\author{% TODO: ton nom
+Prénom Nom}
+\date{\today}
+ 
+\begin{document}
+ 
+\maketitle
+\tableofcontents
+ 
+% ============================================================
+\chapter{Introduction}
+% ============================================================
+ 
+\section{Contexte et objectifs}
+% TODO : reformule avec tes propres mots à partir du sujet de tutorat.
+Ce document présente l'état de l'art réalisé dans le cadre du sujet de tutorat
+\emph{« Jumeau numérique d'une infrastructure de calcul »}. L'objectif est
+d'explorer les clouds et leurs évolutions dans le contexte du \emph{Fog
+Computing} (cloud public, privé, hybride, multi-cloud, DevOps, SRE), afin de
+déterminer dans quelle mesure un jumeau numérique peut permettre la
+simulation et la prédiction (coûts/FinOps, performance) dans la formation et
+l'optimisation d'une infrastructure de calcul.
+ 
+\section{Méthodologie de recherche}
+% TODO : adapte selon tes recherches réelles.
+\begin{itemize}
+  \item \textbf{Bases consultées} : IEEE Xplore, ACM Digital Library,
+        ScienceDirect, SpringerLink, arXiv, Google Scholar.
+  \item \textbf{Mots-clés} : \emph{digital twin cloud}, \emph{network digital
+        twin}, \emph{cloud simulator}, \emph{data center simulation},
+        \emph{infrastructure as code simulation}, \emph{Terraform cost
+        prediction}, \emph{FinOps forecasting}, \emph{cloud performance
+        prediction machine learning}.
+  \item \textbf{Période couverte} : $2010$--$2026$.
+  \item \textbf{Critères d'inclusion} : travaux proposant un outil, un
+        modèle ou une méthode de simulation/prédiction pour une
+        infrastructure de calcul (cloud, data center, edge), ou portant sur
+        le concept de jumeau numérique appliqué à l'IT.
+\end{itemize}
+ 
+\section{Plan de l'état de l'art}
+Le document est organisé en cinq axes, correspondant aux dimensions du sujet :
+simulateurs d'infrastructures cloud/datacenter (\autoref{ch:simulateurs}),
+jumeaux numériques appliqués au cloud/réseau (\autoref{ch:jumeaux}),
+infrastructure as code et son lien avec la simulation (\autoref{ch:iac}),
+prédiction de performance (\autoref{ch:performance}) et prédiction de coûts /
+FinOps (\autoref{ch:finops}). Une synthèse comparative et un positionnement
+du sujet concluent le document (\autoref{ch:synthese}).
+ 
+ 
+% ============================================================
+\chapter{Simulateurs d'infrastructures cloud et data center}
+\label{ch:simulateurs}
+% ============================================================
+ 
+\section{Panorama}
+% TODO : rédige 1-2 paragraphes de mise en contexte (pourquoi simuler avant
+% de déployer, limites du test en environnement réel, coûts, etc.)
+ 
+\section{Fiches de lecture}
+ 
+% ---------- Fiche type (à dupliquer pour chaque référence) ----------
+\subsection{CloudNetSim++ \cite{malik2017cloudnetsim}}
+\begin{description}
+  \item[Problème traité] Les simulateurs cloud existants manquent de
+    modèles réseau réalistes (au niveau paquet) et d'interface graphique
+    riche pour l'analyse fine.
+  \item[Approche] Simulateur au niveau paquet construit sur OMNeT++/INET,
+    avec des modules dédiés : \emph{VM Manager}, \emph{User Task Scheduler},
+    module d'énergie, gestion de SLA et de tarification, support multi-site
+    (data centers géographiquement distribués) et topologies mesh/star/ring.
+  \item[Validation] Vérification formelle par réseaux de Petri de haut
+    niveau (HLPN) et solveur SMT/Z3 ; évaluation expérimentale (usage
+    CPU/mémoire, délai de construction de la GUI, scalabilité utilisateurs,
+    consommation énergétique) sur une charge réelle de 22\,385 tâches.
+  \item[Limites] Pas d'ajout dynamique de serveurs pendant la simulation ;
+    topologies inter-datacenter limitées à trois types ; pas de
+    synchronisation bidirectionnelle avec une infrastructure réelle (donc
+    pas un « vrai » jumeau numérique au sens strict).
+  \item[Pertinence] Référence centrale pour la partie \emph{simulation
+    d'infrastructure} : bon exemple de modularité (VM Manager, scheduler,
+    module énergie) réutilisable pour la conception du jumeau numérique visé
+    par ce projet. Le Tableau~\ref{tab:comparatif} reprend sa comparaison
+    avec 6 autres simulateurs (iCanCloud, CloudSim, GreenCloud, CloudSched,
+    MDCSim, CloudAnalyst).
+\end{description}
+ 
+\subsection{CloudSim \cite{buyya2011cloudsim}}
+\begin{description}
+  \item[Problème traité] % TODO
+  \item[Approche] %TODO : simulateur événementiel Java, modélisation de
+    VM/hôtes/politiques d'allocation, pas de modèle réseau fin.
+  \item[Limites] % TODO
+  \item[Pertinence] % TODO
+\end{description}
+ 
+\subsection{GreenCloud \cite{kliazovich2010greencloud}}
+\begin{description}
+  \item[Problème traité] % TODO
+  \item[Approche] % TODO : simulateur packet-level basé sur NS2, focalisé
+    énergie.
+  \item[Limites] % TODO
+  \item[Pertinence] % TODO
+\end{description}
+ 
+% TODO : ajoute une fiche par référence supplémentaire (iCanCloud, CloudSched, etc.)
+ 
+ 
+% ============================================================
+\chapter{Jumeaux numériques appliqués au cloud et au réseau}
+\label{ch:jumeaux}
+% ============================================================
+ 
+\section{Définition et périmètre}
+% TODO : définir le concept de jumeau numérique (réplique virtuelle
+% synchronisée avec un système physique, boucle de rétroaction) et le
+% distinguer d'un simple simulateur statique.
+ 
+\section{Fiches de lecture}
+ 
+\subsection{Network Digital Twin pour le continuum Edge--Cloud \cite{networkdigitaltwin2025}}
+\begin{description}
+  \item[Problème traité] Absence de synthèse centrée sur les spécificités
+    du jumeau numérique réseau (NDT) dans le contexte Edge-Cloud Continuum.
+  \item[Approche] Revue de littérature couvrant l'architecture, les
+    composants clés du NDT, l'intégration de modèles de machine
+    learning/IA, la gestion de la virtualisation et les capacités du
+    Software-Defined Networking.
+  \item[Limites] % TODO : à préciser après lecture complète.
+  \item[Pertinence] Cadre de référence pour définir l'architecture générale
+    (collecte de données, modélisation, boucle de contrôle) du jumeau
+    numérique du projet.
+\end{description}
+ 
+\subsection{Jumeaux numériques pour data centers (simulation, conception, contrôle thermique) \cite{liu2025dcdigitaltwin}}
+\begin{description}
+  \item[Problème traité] Panorama des solutions existantes de jumeau
+    numérique appliquées aux data centers.
+  \item[Approche] Catégorisation en plateformes de simulation physique et
+    en architectures cloud/edge (ex. Azure Digital Twins, AWS IoT
+    TwinMaker) ; met en avant la synchronisation avec des capteurs et
+    systèmes de gestion réels.
+  \item[Limites] Les solutions purement cloud présentent des problèmes de
+    latence pour le contrôle temps réel.
+  \item[Pertinence] Illustre le compromis edge/cloud à considérer pour
+    l'architecture du prototype.
+\end{description}
+ 
+\subsection{Jumeau numérique d'infrastructure d'entreprise (Cyber-Range-as-a-Service) \cite{cyberrange2021digitaltwin}}
+\begin{description}
+  \item[Problème traité] % TODO
+  \item[Approche] Réplication d'une infrastructure d'entreprise (utilisateurs,
+    ressources, trafic réseau) via un modèle statistique, instanciée sur des
+    ressources cloud à grande échelle.
+  \item[Limites] % TODO
+  \item[Pertinence] % TODO : lien possible avec la partie représentation
+    graphique de l'infrastructure (sujet connexe mentionné dans la fiche de
+    tutorat).
+\end{description}
+ 
+ 
+% ============================================================
+\chapter{Infrastructure as Code et simulation/prédiction}
+\label{ch:iac}
+% ============================================================
+ 
+\section{Panorama}
+% TODO : expliquer le rôle de l'IaC (Terraform, etc.) comme description
+% déclarative de l'infrastructure, et pourquoi cette description peut servir
+% de base à un jumeau numérique (état désiré vs état réel, plan de
+% déploiement comme entrée de simulation).
+ 
+\subsection{Infracost \cite{infracost}}
+\begin{description}
+  \item[Problème traité] Absence de visibilité sur le coût d'une
+    infrastructure avant son déploiement effectif.
+  \item[Approche] Analyse statique des fichiers Terraform (ou du plan
+    Terraform), association de chaque ressource déclarée aux données de
+    tarification du fournisseur cloud, intégration en CI/CD (commentaire de
+    coût sur chaque pull request).
+  \item[Limites] Estimation basée sur des hypothèses d'usage pour les
+    services à la consommation (ex. Lambda, S3) ; pas de simulation du
+    comportement réel de l'infrastructure (charge, latence, etc.), seulement
+    du coût.
+  \item[Pertinence] Brique \emph{FinOps} directement réutilisable /
+    comparable pour le module de prédiction de coût du jumeau numérique visé.
+\end{description}
+ 
+% TODO : ajouter d'autres outils IaC-driven (OpenTofu, Pulumi cost, AWS
+% Infrastructure Composer, CloudFormation Guard, etc.) si pertinents.
+ 
+ 
+% ============================================================
+\chapter{Prédiction de performance}
+\label{ch:performance}
+% ============================================================
+ 
+\subsection{CloudProphet \cite{huang2023cloudprophet}}
+\begin{description}
+  \item[Problème traité] Prédiction de performance d'applications
+    s'exécutant dans des VM « boîte noire » en cloud public, rendue
+    difficile par l'absence de visibilité sur le contenu de la VM.
+  \item[Approche] Identification préalable de l'application exécutée dans
+    la VM, puis sélection de métriques runtime fortement corrélées comme
+    entrée d'un modèle de machine learning pour prédire le niveau de
+    performance ; introduction d'un indice de dégradation de performance
+    pour les charges variables.
+  \item[Résultats] Amélioration de plus de 2$\times$ par rapport aux
+    méthodes de prédiction existantes en termes d'erreur maximale.
+  \item[Limites] % TODO : à compléter après lecture complète (dépendance au
+    jeu d'applications connu, généralisation à des charges inédites, etc.)
+  \item[Pertinence] Exemple de méthode ML de prédiction de performance
+    exploitable pour le module « prédiction » du jumeau numérique.
+\end{description}
+ 
+\subsection{Modèles ML de prédiction de charge cloud \cite{saxena2023workload}}
+\begin{description}
+  \item[Problème traité] Difficulté d'estimer précisément l'usage des
+    ressources du fait de la variabilité et de la dimensionnalité des
+    charges de travail cloud.
+  \item[Approche] Classification et taxonomie de cinq catégories
+    d'approches de prédiction, comparaison expérimentale sur trois traces
+    de charge réelles.
+  \item[Limites] % TODO
+  \item[Pertinence] Vue d'ensemble utile pour choisir la famille de modèles
+    (statistique, ML classique, deep learning) adaptée au module de
+    prédiction du jumeau numérique.
+\end{description}
+ 
+% TODO : ajouter fiche pour deepconfig2024 et mlresourcemgmt2021
+ 
+ 
+% ============================================================
+\chapter{Prédiction de coûts et FinOps}
+\label{ch:finops}
+% ============================================================
+ 
+\section{Panorama}
+% TODO : définir FinOps (gouvernance financière du cloud), les trois phases
+% (Inform / Optimize / Operate) et le lien avec les pratiques DevOps/SRE
+% mentionnées dans le sujet.
+ 
+\subsection{Cloud FinOps \cite{storment2023finops}}
+\begin{description}
+  \item[Problème traité] Absence de discipline structurée pour gérer
+    financièrement un modèle de dépense cloud variable.
+  \item[Approche] Cadre méthodologique en trois phases (Inform, Optimize,
+    Operate) ; couvre la prévision de dépenses, l'allocation des coûts et
+    les stratégies de remise sur engagement.
+  \item[Limites] Ouvrage de référence pratique plutôt qu'une contribution
+    scientifique/technique ; peu de détails algorithmiques sur la
+    prévision.
+  \item[Pertinence] Cadre conceptuel pour définir les indicateurs FinOps que
+    le jumeau numérique devra prédire (coût par ressource, dérive
+    budgétaire, etc.).
+\end{description}
+ 
+ 
+% ============================================================
+\chapter{Synthèse et positionnement}
+\label{ch:synthese}
+% ============================================================
+ 
+\section{Tableau comparatif}
+ 
+% Modèle inspiré du Tableau 1 de CloudNetSim++ (Malik et al., 2017),
+% à adapter/compléter avec tes propres critères et références.
+\begin{table}[htbp]
+  \centering
+  \caption{Comparaison synthétique des travaux étudiés}
+  \label{tab:comparatif}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lccccccc}
+    \toprule
+    \textbf{Outil / Travail} & \textbf{Type} & \textbf{Modèle réseau} &
+    \textbf{Énergie} & \textbf{Prédiction perf.} & \textbf{Prédiction coût} &
+    \textbf{Sync. temps réel} & \textbf{Open source} \\
+    \midrule
+    CloudNetSim++       & Simulateur     & Réel (paquet) & Oui & Non  & Non  & Non & Oui \\
+    CloudSim            & Simulateur     & Non           & Oui & Non  & Non  & Non & Oui \\
+    GreenCloud          & Simulateur     & Paquet        & Oui & Non  & Non  & Non & Oui \\
+    Infracost            & Outil IaC      & --            & --  & Non  & Oui  & Non & Oui \\
+    CloudProphet         & Modèle ML      & --            & --  & Oui  & Non  & Non & \% TODO \\
+    NDT (survey)          & Concept / archi. & Variable    & Variable & Variable & Variable & \textbf{Oui (visé)} & -- \\
+    \textbf{Jumeau numérique visé (ce projet)} & Jumeau numérique & À définir & À définir & \textbf{Oui} & \textbf{Oui} & \textbf{Oui} & À définir \\
+    \bottomrule
+  \end{tabular}%
+  }
+\end{table}
+ 
+% TODO : ajuste les colonnes/critères en fonction de ce qui compte vraiment
+% pour ton projet (ex : granularité de la simulation, support multi-cloud,
+% support Terraform natif, etc.)
+ 
+\section{Constats}
+% TODO : rédige 3-5 constats issus du tableau, ex :
+% - Les simulateurs cloud (CloudSim, GreenCloud, CloudNetSim++) sont matures
+%   pour la simulation technique mais ne modélisent pas le coût.
+% - Les outils FinOps/IaC (Infracost) prédisent le coût mais sans simulation
+%   comportementale ni synchronisation avec l'infrastructure réelle.
+% - Les travaux sur les Network Digital Twins définissent l'architecture
+%   conceptuelle mais restent peu appliqués concrètement au couple
+%   coût/performance dans un contexte multi-cloud/Fog.
+ 
+\section{Positionnement du sujet}
+% TODO : explique en quoi ton futur prototype comble le(s) gap(s)
+% identifié(s) (ex : coupler simulation technique + prédiction de coût
+% FinOps + description IaC (Terraform) dans un même jumeau numérique
+% synchronisé).
+ 
+ 
+% ============================================================
+\chapter{Conclusion}
+% ============================================================
+% TODO : résumé en quelques lignes + prochaine étape (proposition de
+% prototype, choix d'architecture, etc. selon le timing du projet).
+ 
+\bibliographystyle{plain}
+\bibliography{references}
+ 
+\end{document}
+ 
