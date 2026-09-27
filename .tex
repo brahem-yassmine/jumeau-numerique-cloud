@@ -1,3 +1,4 @@
+e l art · TEX
 \documentclass[a4paper,11pt]{report}
  
 \usepackage[french]{babel}
@@ -56,13 +57,122 @@ l'optimisation d'une infrastructure de calcul.
 \end{itemize}
  
 \section{Plan de l'état de l'art}
-Le document est organisé en cinq axes, correspondant aux dimensions du sujet :
-simulateurs d'infrastructures cloud/datacenter (\autoref{ch:simulateurs}),
-jumeaux numériques appliqués au cloud/réseau (\autoref{ch:jumeaux}),
-infrastructure as code et son lien avec la simulation (\autoref{ch:iac}),
-prédiction de performance (\autoref{ch:performance}) et prédiction de coûts /
-FinOps (\autoref{ch:finops}). Une synthèse comparative et un positionnement
-du sujet concluent le document (\autoref{ch:synthese}).
+Le document est organisé en six axes, correspondant aux dimensions du sujet :
+un rappel sur le cloud computing, ses origines et ses limites qui motivent le
+concept de jumeau numérique (\autoref{ch:cloud}), les simulateurs
+d'infrastructures cloud/datacenter (\autoref{ch:simulateurs}), les jumeaux
+numériques appliqués au cloud/réseau (\autoref{ch:jumeaux}), l'infrastructure
+as code — en particulier Terraform — et son lien avec la simulation
+(\autoref{ch:iac}), la prédiction de performance (\autoref{ch:performance})
+et la prédiction de coûts / FinOps (\autoref{ch:finops}). Une synthèse
+comparative et un positionnement du sujet concluent le document
+(\autoref{ch:synthese}).
+ 
+ 
+% ============================================================
+\chapter{Le Cloud Computing : origines, forces et limites}
+\label{ch:cloud}
+% ============================================================
+ 
+\section{Origines et évolution}
+% TODO : complète/reformule, ajoute des références si besoin
+Le \emph{cloud computing} s'appuie sur des technologies de virtualisation
+apparues dès la fin des années 1990 (hyperviseurs de type VMware), qui
+permettent de faire tourner plusieurs machines virtuelles isolées sur un même
+serveur physique. Le tournant commercial a lieu au milieu des années 2000 :
+Amazon lance \emph{Elastic Compute Cloud (EC2)} et \emph{Simple Storage
+Service (S3)} en 2006, suivis par Google App Engine (2008) et Microsoft
+Azure (2010), popularisant un modèle de ressources informatiques louées à la
+demande plutôt qu'achetées et exploitées en interne.
+ 
+En 2011, le NIST (\emph{National Institute of Standards and Technology})
+publie une définition de référence du cloud computing autour de cinq
+caractéristiques essentielles (libre-service à la demande, accès réseau
+large, mutualisation des ressources, élasticité rapide, service mesuré), de
+trois modèles de service (IaaS, PaaS, SaaS) et de quatre modèles de
+déploiement (cloud public, privé, communautaire, hybride).
+% TODO : citer la référence NIST SP 800-145 si tu veux formaliser cette
+% partie (\cite{...}).
+ 
+Plus récemment, l'essor de l'\emph{Internet des objets} et des applications
+sensibles à la latence (temps réel, véhicules autonomes, usines connectées)
+a fait émerger le \emph{Fog Computing} et l'\emph{Edge Computing} : une
+partie du traitement est rapprochée de la source de données plutôt que
+centralisée dans un data center distant, donnant naissance à des
+architectures multi-niveaux (device -- edge -- fog -- cloud) et à la notion
+de \emph{multi-cloud} (utilisation simultanée de plusieurs fournisseurs).
+En parallèle, les pratiques \emph{DevOps} et \emph{SRE (Site Reliability
+Engineering)} se généralisent pour automatiser le déploiement, l'exploitation
+et la fiabilisation de ces infrastructures de plus en plus complexes.
+ 
+\section{Points forts du Cloud Computing}
+% TODO : illustre chaque point par un exemple concret si possible
+\begin{itemize}
+  \item \textbf{Élasticité et scalabilité} : possibilité d'ajuster
+    dynamiquement les ressources allouées (CPU, mémoire, stockage) en
+    fonction de la charge réelle.
+  \item \textbf{Modèle économique à la consommation (pay-as-you-go)} :
+    suppression des coûts d'investissement matériel (CapEx) au profit de
+    coûts opérationnels (OpEx) proportionnels à l'usage.
+  \item \textbf{Accessibilité et mise à disposition rapide} : provisionnement
+    de ressources en quelques minutes, contre plusieurs semaines pour du
+    matériel physique.
+  \item \textbf{Résilience et haute disponibilité} : réplication
+    géographique, tolérance aux pannes, mécanismes de reprise après sinistre
+    proposés nativement par les fournisseurs.
+  \item \textbf{Externalisation de la maintenance} : le fournisseur cloud
+    prend en charge la maintenance matérielle, les mises à jour de sécurité
+    de l'infrastructure sous-jacente, etc.
+\end{itemize}
+ 
+\section{Points faibles et limites}
+% TODO : développe, ajoute des chiffres/sources si tu en trouves
+\begin{itemize}
+  \item \textbf{Imprévisibilité des coûts} : la facturation à l'usage rend
+    difficile l'anticipation précise de la dépense, en particulier pour des
+    architectures complexes ou des pics de charge non planifiés — d'où
+    l'émergence de la discipline FinOps (\autoref{ch:finops}).
+  \item \textbf{Complexité croissante} : la multiplication des services
+    managés, des régions et des fournisseurs (multi-cloud) rend
+    l'infrastructure difficile à appréhender dans son ensemble, y compris
+    pour les équipes qui l'exploitent.
+  \item \textbf{Dépendance au fournisseur (\emph{vendor lock-in})} :
+    l'utilisation de services propriétaires complique la portabilité vers
+    un autre fournisseur.
+  \item \textbf{Difficulté à tester avant déploiement} : les environnements
+    de production réels (Amazon EC2, etc.) limitent l'expérimentation, et il
+    est risqué/coûteux de tester des changements d'infrastructure ou des
+    algorithmes d'ordonnancement directement en production
+    \cite{malik2017cloudnetsim}.
+  \item \textbf{Sécurité et confidentialité} : mutualisation des ressources
+    physiques entre plusieurs clients (multi-tenant), surface d'attaque
+    élargie, questions de conformité réglementaire selon la localisation des
+    données.
+  \item \textbf{Consommation énergétique} : les data centers représentent
+    une part importante et croissante de la consommation électrique
+    mondiale, avec des enjeux de refroidissement et d'empreinte carbone
+    \cite{malik2017cloudnetsim}.
+\end{itemize}
+ 
+\section{Vers le jumeau numérique : pourquoi ce concept émerge}
+% TODO : c'est la transition la plus importante de cette section, à
+% reformuler avec tes mots — elle doit justifier pourquoi tu introduis le
+% concept de jumeau numérique juste après ce chapitre.
+Les limites précédentes ont un point commun : elles proviennent toutes d'un
+manque de \textbf{visibilité et de prévisibilité} avant que les changements
+ne soient réellement appliqués à l'infrastructure. Un opérateur ne peut
+aujourd'hui connaître avec certitude, avant déploiement, ni le coût exact
+d'une configuration, ni son comportement sous charge, ni l'impact d'une
+modification de topologie ou d'un changement de fournisseur.
+ 
+C'est précisément ce manque que le concept de \textbf{jumeau numérique}
+(\emph{digital twin}) vise à combler : construire une réplique virtuelle,
+continuellement synchronisée avec l'infrastructure réelle, permettant de
+\emph{simuler} et de \emph{prédire} son comportement (coût, performance,
+consommation énergétique) avant, pendant et après un changement, sans
+risquer l'environnement de production. Le chapitre suivant
+(\autoref{ch:jumeaux}) détaille ce concept et les travaux existants qui
+s'en approchent.
  
  
 % ============================================================
@@ -186,6 +296,95 @@ du sujet concluent le document (\autoref{ch:synthese}).
 % déclarative de l'infrastructure, et pourquoi cette description peut servir
 % de base à un jumeau numérique (état désiré vs état réel, plan de
 % déploiement comme entrée de simulation).
+L'\emph{Infrastructure as Code} (IaC) consiste à décrire une infrastructure
+(serveurs, réseaux, bases de données, permissions...) sous forme de fichiers
+texte versionnables plutôt que de la configurer manuellement via une
+interface graphique. Cette description devient alors une source de vérité
+exploitable par des outils tiers : c'est cette propriété qui rend l'IaC
+particulièrement intéressante comme \textbf{point d'entrée} d'un jumeau
+numérique, puisqu'elle fournit déjà, sous forme structurée, l'état désiré de
+l'infrastructure.
+ 
+\section{Terraform}
+\label{sec:terraform}
+ 
+\subsection{Présentation et fonctionnement}
+% TODO : reformule avec tes mots, ajoute une capture d'écran de code HCL si
+% tu veux illustrer.
+Terraform est un outil open source d'Infrastructure as Code développé par
+HashiCorp, publié en 2014. Il permet de décrire, de manière
+\textbf{déclarative}, l'état souhaité d'une infrastructure dans des
+fichiers écrits en \emph{HashiCorp Configuration Language} (HCL), puis de
+faire converger l'infrastructure réelle vers cet état via un cycle de vie en
+trois étapes :
+ 
+\begin{itemize}
+  \item \texttt{terraform init} : initialise le projet et télécharge les
+    \emph{providers} nécessaires (modules qui savent dialoguer avec l'API
+    d'un fournisseur cloud donné : AWS, Azure, Google Cloud, OVH, etc.) ;
+  \item \texttt{terraform plan} : calcule et affiche le \textbf{différentiel}
+    entre l'état actuel de l'infrastructure (stocké dans un fichier d'état,
+    le \emph{state}) et l'état décrit dans le code, sans rien modifier
+    réellement — cette étape est particulièrement intéressante pour un
+    jumeau numérique, car elle constitue déjà une forme de
+    \guillemotleft~simulation~\guillemotright{} de ce qui \emph{va} se
+    passer ;
+  \item \texttt{terraform apply} : applique effectivement les changements
+    calculés à l'étape précédente pour faire converger l'infrastructure
+    réelle vers l'état désiré.
+\end{itemize}
+ 
+Terraform est \textbf{multi-cloud} par construction : le même langage HCL
+permet de décrire des ressources chez différents fournisseurs (voire
+plusieurs simultanément), ce qui en fait un candidat naturel pour représenter
+des architectures hybrides ou multi-cloud comme celles évoquées dans le
+sujet de ce projet.
+ 
+\subsection{Points forts}
+\begin{itemize}
+  \item \textbf{Déclaratif et idempotent} : on décrit l'état voulu (pas la
+    suite d'actions pour y arriver), et appliquer plusieurs fois le même
+    code produit le même résultat.
+  \item \textbf{Prévisualisation avant action} (\texttt{plan}) : réduit le
+    risque de changement destructif non anticipé.
+  \item \textbf{Multi-cloud et multi-fournisseur} via un système extensible
+    de \emph{providers} et un large écosystème communautaire.
+  \item \textbf{Versionnable} : le code d'infrastructure peut être suivi
+    dans Git au même titre que du code applicatif (revue de code, historique,
+    rollback).
+\end{itemize}
+ 
+\subsection{Limites}
+\begin{itemize}
+  \item \textbf{Gestion du fichier d'état (\emph{state})} : ce fichier
+    décrit la correspondance entre le code et les ressources réelles ; sa
+    perte, sa corruption ou une divergence non détectée (\emph{drift}, un
+    changement fait manuellement en dehors de Terraform) peuvent
+    désynchroniser la représentation et la réalité — un problème central
+    pour un jumeau numérique qui doit justement rester synchronisé avec
+    l'infrastructure réelle.
+  \item \textbf{Pas de prédiction de coût ni de performance native} :
+    \texttt{terraform plan} indique \emph{quelles ressources} vont changer,
+    mais ne dit rien sur le coût résultant ni sur le comportement sous
+    charge — d'où le recours à des outils complémentaires comme Infracost
+    (ci-dessous) pour le volet coût.
+  \item \textbf{Courbe d'apprentissage du langage HCL} et complexité des
+    modules pour de grandes infrastructures.
+  \item \textbf{Risque d'actions destructives} : une mauvaise
+    compréhension du \emph{plan} peut mener à la suppression accidentelle de
+    ressources en production.
+\end{itemize}
+ 
+\subsection{Pertinence pour le jumeau numérique}
+% TODO : c'est le paragraphe le plus important de cette section — explique
+% comment TON projet compte utiliser Terraform concrètement.
+Le triplet \emph{code déclaratif -- state -- plan} de Terraform présente une
+analogie directe avec l'architecture générale d'un jumeau numérique
+(modèle -- état courant -- simulation d'un changement avant application). Le
+fichier de state peut être vu comme une première brique de synchronisation
+entre le monde réel et sa représentation virtuelle, et la sortie de
+\texttt{terraform plan} comme une entrée exploitable pour un module de
+prédiction de coût (type Infracost) ou, à terme, de performance.
  
 \subsection{Infracost \cite{infracost}}
 \begin{description}
